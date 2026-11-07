@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: GPL-3.0
 #
 # GNU Radio Python Flow Graph
-# Title: Enlace_Beta_Interferencia
-# Description: GRC con AWGN para BPSK
+# Title: Modulaciones_basadas_en_constelaciones_AWGN
+# Description: GRC con AWGN para OOK ASK BPSK QPSK 8PSK y 16QAM
 # GNU Radio version: 3.10.9.2
 
 from PyQt5 import Qt
@@ -34,9 +34,9 @@ import sip
 class Modulaciones_basadas_en_constelaciones_AWGN(gr.top_block, Qt.QWidget):
 
     def __init__(self):
-        gr.top_block.__init__(self, "Enlace_Beta_Interferencia", catch_exceptions=True)
+        gr.top_block.__init__(self, "Modulaciones_basadas_en_constelaciones_AWGN", catch_exceptions=True)
         Qt.QWidget.__init__(self)
-        self.setWindowTitle("Enlace_Beta_Interferencia")
+        self.setWindowTitle("Modulaciones_basadas_en_constelaciones_AWGN")
         qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
@@ -66,24 +66,23 @@ class Modulaciones_basadas_en_constelaciones_AWGN(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.tabla_de_verdad_constelacion = tabla_de_verdad_constelacion = (-1+0j, 1+0j)
+        self.tabla_de_verdad_constelacion = tabla_de_verdad_constelacion = (0+0j, 1+0j)
         self.M = M = len(tabla_de_verdad_constelacion)
         self.bps = bps = int(math.log(M,2))
         self.Sps = Sps = 8
         self.Rs = Rs = 32000
         self.samp_rate = samp_rate = Rs*Sps
         self.h = h = [1]*Sps
+        self.amp = amp = 0.6
         self.Rb = Rb = Rs*bps
-        self.F_noise = F_noise = 15000
-        self.A_noise = A_noise = 0.10
 
         ##################################################
         # Blocks
         ##################################################
 
-        self._A_noise_range = qtgui.Range(0, 0.5, 0.05, 0.10, 100)
-        self._A_noise_win = qtgui.RangeWidget(self._A_noise_range, self.set_A_noise, "Amplitud de ruido AWGN", "counter_slider", float, QtCore.Qt.Horizontal)
-        self.top_layout.addWidget(self._A_noise_win)
+        self._amp_range = qtgui.Range(0, 1, 0.1, 0.6, 100)
+        self._amp_win = qtgui.RangeWidget(self._amp_range, self.set_amp, "Amplitud de ruido AWGN", "counter_slider", float, QtCore.Qt.Horizontal)
+        self.top_layout.addWidget(self._amp_win)
         self.throttle_0 = blocks.throttle( gr.sizeof_gr_complex*1, samp_rate, True, 0 if "auto" == "auto" else max( int(float(0.1) * samp_rate) if "auto" == "time" else int(0.1), 1) )
         self.qtgui_time_sink_x_0 = qtgui.time_sink_c(
             2048, #size
@@ -223,11 +222,11 @@ class Modulaciones_basadas_en_constelaciones_AWGN(gr.top_block, Qt.QWidget):
         self.interp_fir_filter_xxx_0 = filter.interp_fir_filter_ccf(Sps, h)
         self.interp_fir_filter_xxx_0.declare_sample_delay(0)
         self.digital_chunks_to_symbols_xx_0 = digital.chunks_to_symbols_bc(tabla_de_verdad_constelacion, 1)
+        self.blocks_vector_source_x_0 = blocks.vector_source_c([0j]*255 + [amp+0j], True, 1, [])
         self.blocks_packed_to_unpacked_xx_0 = blocks.packed_to_unpacked_bb(bps, gr.GR_MSB_FIRST)
         self.blocks_pack_k_bits_bb_0 = blocks.pack_k_bits_bb(8)
-        self.blocks_add_xx_1 = blocks.add_vcc(1)
+        self.blocks_add_xx_0_0 = blocks.add_vcc(1)
         self.blocks_add_xx_0 = blocks.add_vcc(1)
-        self.analog_sig_source_x_0 = analog.sig_source_c(samp_rate, analog.GR_COS_WAVE, F_noise, A_noise, 0, 0)
         self.analog_random_source_x_0 = blocks.vector_source_b(list(map(int, numpy.random.randint(0, 2, 1000))), True)
         self.analog_noise_source_x_0 = analog.noise_source_c(analog.GR_GAUSSIAN, 0.1, 0)
 
@@ -237,13 +236,13 @@ class Modulaciones_basadas_en_constelaciones_AWGN(gr.top_block, Qt.QWidget):
         ##################################################
         self.connect((self.analog_noise_source_x_0, 0), (self.blocks_add_xx_0, 1))
         self.connect((self.analog_random_source_x_0, 0), (self.blocks_pack_k_bits_bb_0, 0))
-        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_add_xx_1, 1))
-        self.connect((self.blocks_add_xx_0, 0), (self.blocks_add_xx_1, 0))
-        self.connect((self.blocks_add_xx_1, 0), (self.qtgui_const_sink_x_0, 0))
-        self.connect((self.blocks_add_xx_1, 0), (self.qtgui_freq_sink_x_0, 0))
-        self.connect((self.blocks_add_xx_1, 0), (self.qtgui_time_sink_x_0, 0))
+        self.connect((self.blocks_add_xx_0, 0), (self.blocks_add_xx_0_0, 0))
+        self.connect((self.blocks_add_xx_0_0, 0), (self.qtgui_const_sink_x_0, 0))
+        self.connect((self.blocks_add_xx_0_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.blocks_add_xx_0_0, 0), (self.qtgui_time_sink_x_0, 0))
         self.connect((self.blocks_pack_k_bits_bb_0, 0), (self.blocks_packed_to_unpacked_xx_0, 0))
         self.connect((self.blocks_packed_to_unpacked_xx_0, 0), (self.digital_chunks_to_symbols_xx_0, 0))
+        self.connect((self.blocks_vector_source_x_0, 0), (self.blocks_add_xx_0_0, 1))
         self.connect((self.digital_chunks_to_symbols_xx_0, 0), (self.interp_fir_filter_xxx_0, 0))
         self.connect((self.interp_fir_filter_xxx_0, 0), (self.throttle_0, 0))
         self.connect((self.throttle_0, 0), (self.blocks_add_xx_0, 0))
@@ -300,7 +299,6 @@ class Modulaciones_basadas_en_constelaciones_AWGN(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
         self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate)
         self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
         self.throttle_0.set_sample_rate(self.samp_rate)
@@ -312,25 +310,18 @@ class Modulaciones_basadas_en_constelaciones_AWGN(gr.top_block, Qt.QWidget):
         self.h = h
         self.interp_fir_filter_xxx_0.set_taps(self.h)
 
+    def get_amp(self):
+        return self.amp
+
+    def set_amp(self, amp):
+        self.amp = amp
+        self.blocks_vector_source_x_0.set_data([0j]*255 + [self.amp+0j], [])
+
     def get_Rb(self):
         return self.Rb
 
     def set_Rb(self, Rb):
         self.Rb = Rb
-
-    def get_F_noise(self):
-        return self.F_noise
-
-    def set_F_noise(self, F_noise):
-        self.F_noise = F_noise
-        self.analog_sig_source_x_0.set_frequency(self.F_noise)
-
-    def get_A_noise(self):
-        return self.A_noise
-
-    def set_A_noise(self, A_noise):
-        self.A_noise = A_noise
-        self.analog_sig_source_x_0.set_amplitude(self.A_noise)
 
 
 
