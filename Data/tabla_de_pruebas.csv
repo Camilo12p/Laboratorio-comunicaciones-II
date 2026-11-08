@@ -1,0 +1,17 @@
+Nombre,Prueba de impulsos 
+,
+Parametros fijos ,
+Rs,32 ksyms/s
+Rb,32 kb/s
+Sps,8
+frecuencia ,Banda base
+Consteacion BPSK,"(-1+0j, 1+0j)"
+amplitud del ruido ,"0,1"
+tipo de ruido ,AWGN
+tipo de filtrado ,rectangular 
+,
+Pruebas,amplitud del pulso
+Referencia ,0
+Suave,"0,3"
+Media,"0,6"
+Fuerte,1
