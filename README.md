@@ -5,11 +5,6 @@
 
 ---
 
-## 🔗 Enlaces de Interés
-* **Blog Público de Divulgación Técnica (Estilo ABET):** [Enlace al Blog del Proyecto](https://tu-blog-publico-aqui.com) *(Reemplazar con el enlace público)*
-* **Video de Socialización:** [Enlace al Video de YouTube / Presentación](https://tu-enlace-de-video-aqui.com) *(Reemplazar cuando corresponda)*
-
----
 
 ## 👥 Integrantes
 * **Wilmer Camilo Patiño Martínez** *(2192561)*
@@ -34,11 +29,11 @@ El proyecto aborda el diseño y evaluación de un sistema de telemetría industr
 ---
 
 ## 🚀 Archivo GRC Principal y Ejecución
-El archivo principal de flujo ejecutable se encuentra en la ruta `grc/archivos_modificados/enlace_telemetria_s1.grc`.
+El archivo principal de flujo ejecutable se encuentra en la ruta `grc/archivos_modificados/Enlaces_con_pulsos_controlados.grc`.
 
 ### Pasos para ejecutar:
 1. Asegurarse de tener instalado **GNU Radio** (versión compatible con flujogramas de bloques Qt GUI).
-2. Clonar el repositorio y abrir una terminal en Linux Mint. `git clone https://github.com/Camilo12p/Laboratorio-comunicaciones-II.git`.
+2. Clonar el repositorio y abrir una terminal. `git clone https://github.com/Camilo12p/Laboratorio-comunicaciones-II.git`.
 3. Entrar a la carpeta grc/archivos modificados.
 4. Ejecutar el entorno gráfico y abrir el archivo GRC:
    `Enlace_con_pulsos_controlados.grc`.
